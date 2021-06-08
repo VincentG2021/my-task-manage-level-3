@@ -16,7 +16,12 @@ app.get('/',(req, res) => {
 });
 
 // Create here your api setup
-
+app.post('/api/addtask', (req, data) => {
+  task.addTask(req.body)
+  console.log("hello from brain");
+  console.log(task);
+})
+// app.post('/api/addTask', test.testdb)
 
 
 app.listen(3000, () => console.log("Server Up and running"));
