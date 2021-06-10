@@ -2,26 +2,14 @@
 
 let AddTaskBtn = document.querySelector('.boton')
 let SearchArea = document.querySelector('#tareaInput')
+let LoadTaskBtn = document.querySelector('#btn-load')
+let list = document.querySelector('#lista')
 
-// let agregarBtn = document.querySelector('.boton')
-// let input = document.getElementById('tareaInput').value
+const insertRow = (infos) => {
+  let insertedRow = `<li><a href="#">${infos}</a></li>`;
+  list.insertAdjacentHTML("beforeend", insertedRow)
+}
 
-// const addTarea = () => {
-//   fetch('api/addtask', {
-//     method: 'POST', // or 'PUT'
-//     headers: {
-//     'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({body: "HOLA que tal"}),
-//      })
-//   .then(response => response.json())
-//   .then(data => {
-//     console.log('Success:', data);
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error);
-//   });
-// }
 
 const AddTask = (DataToSend) => {
   fetch('/api/addtask', {
@@ -32,25 +20,46 @@ const AddTask = (DataToSend) => {
       body: JSON.stringify(DataToSend),
 
   })
-  console.log("Hello,")
+  console.log("AddTask function ok")
 }
 
-   
+const getfetchTask = () => {
+  fetch('/api/gettask', {
+  method: 'POST', // or 'PUT'
+  headers: {
+  'Content-Type': 'application/json',
+  },
+  })
+  .then(response => response.json())
+  .then(data => {
+  list.innerHTML="";
+  console.log('Success:', data);
+  data.dataKey.forEach(chose => {
+    insertRow(chose)
+  })
+})
+  .catch((error) => {
+  console.error('Error:', error);
+  });
+  }
+
+  
 
 
   // ENTRY POINTS
 
   AddTaskBtn.addEventListener('click', (event) => {
+    alert("adding btn ok")
     console.log(SearchArea.value)
     let TaskName = document.querySelector('#tareaInput').value
-    AddTask({ data: TaskName });
+    AddTask({ dataKey: TaskName });
+   
+    insertRow(TaskName)
 });
 
-  // AddTaskBtn.addEventListener('click', (event) => {
-  //   // event.preventDefault();
-  //   let input = document.getElementById('tareaInput').value
-  // console.log(input)
-  // addTarea();
-  // console.log("New task added")
-  // alert("Task added to your tasks list")
-  // });
+  LoadTaskBtn.addEventListener('click', (event) => {
+  // event.preventDefault();
+  console.log("load btn ok");
+  getfetchTask();
+  });
+  

@@ -1,18 +1,52 @@
 // BACKEND FILE FOR MY DATABASES QUERIES
 const sqlite3 = require('sqlite3').verbose();
 
-const Test = (data) => {
+let db = new sqlite3.Database('db/db.tasksdatabase');
+
+db.run("CREATE TABLE IF NOT EXISTS mytasks (tasklist TEXT)");
+
+const insertData = (data) => {
   let db = new sqlite3.Database('db/db.tasksdatabase')
-  db.run("INSERT INTO mytasks (curenttasks) VALUES (?)", [data.data]),
+  db.run("INSERT INTO mytasks (curenttasks) VALUES (?)", [data.dataKey]),
 
   console.log("connected to backend")
   db.close();
 }
 
+const getTask = (req, res) => {
+  let sendData = { dataKey: [] };
+
+  let db = new sqlite3.Database("db/db.tasksdatabase", (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log("Connected to the tasks database.");
+  });
+  db.serialize(() => {
+    db.each(`SELECT * FROM mytasks`, (err, row) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log(row.curenttasks);
+      sendData.dataKey.push(row.curenttasks);
+    });
+    // res.send(sendData)
+  });
+
+  db.close((err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log(sendData);
+    res.send(sendData);
+    console.log("Close the database connection.");
+  });
+};
 
 
-exports.Test = Test;
 
+exports.insertData = insertData;
+exports.getTask = getTask;
 
 
 
